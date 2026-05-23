@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Radiance</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div id="toast-container"></div>
+
+  <!-- ── NAVBAR ─────────────────────────────────────────────── -->
+  <nav class="navbar scrolled" id="navbar">
+    <a href="index.html" class="navbar__logo">
+      <img src="assets/logo.svg" alt="Radiance">
+    </a>
+    <ul class="navbar__links">
+      <li><a href="index.html">← Back to Site</a></li>
+    </ul>
+    <div class="navbar__actions">
+      <button class="btn-nav-login" id="nav-login-btn">Log Out</button>
+    </div>
+  </nav>
+
+  <!-- ── ADMIN PAGE ─────────────────────────────────────────── -->
+  <div class="admin-page">
+
+    <!-- Header -->
+    <div class="admin-header">
+      <div>
+        <h1>Admin <span>Dashboard</span></h1>
+        <div class="admin-header__sub">Logged in as <strong id="admin-user-name">—</strong></div>
+      </div>
+      <a href="index.html" class="btn btn--outline"><span>View Live Site</span></a>
+    </div>
+
+    <!-- Stats overview -->
+    <div class="admin-content">
+      <div class="admin-stats">
+        <div class="admin-stat">
+          <div class="admin-stat__val" id="stat-products">—</div>
+          <div class="admin-stat__label">Products</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat__val" id="stat-made">—</div>
+          <div class="admin-stat__label">Total Poured</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat__val" id="stat-sold">—</div>
+          <div class="admin-stat__label">Total Sold</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat__val" id="stat-pending">—</div>
+          <div class="admin-stat__label">Pending Reviews</div>
+          <div class="admin-stat__trend" id="stat-pending-note"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="products">Products & Stock</button>
+      <button class="admin-tab" data-tab="reviews">Review Moderation</button>
+      <button class="admin-tab" data-tab="setup">Setup Guide</button>
+    </div>
+
+    <!-- ── PANEL: Products ────────────────────────────────── -->
+    <div class="admin-content" id="panel-products">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;">
+        <div>
+          <div class="eyebrow">Manage Stock</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin-top:4px;">Update how many were poured and how many have sold. Available count updates automatically.</p>
+        </div>
+        <button class="btn btn--outline" onclick="seedProducts()" style="flex-shrink:0;">
+          <span>Seed Initial Data</span>
+        </button>
+      </div>
+      <div class="admin-products-grid" id="admin-products-grid">
+        <div style="color:var(--muted);font-size:0.85rem;padding:24px;">Loading products…</div>
+      </div>
+    </div>
+
+    <!-- ── PANEL: Reviews ─────────────────────────────────── -->
+    <div class="admin-content" id="panel-reviews" style="display:none;">
+      <div class="eyebrow" style="margin-bottom:8px;">Review Moderation</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:28px;">
+        New reviews are hidden from the public until you approve them. Delete anything inappropriate.
+      </p>
+
+      <div class="admin-reviews-filter">
+        <button class="filter-btn active" data-filter="all">All Reviews</button>
+        <button class="filter-btn" data-filter="pending">Pending Approval</button>
+        <button class="filter-btn" data-filter="approved">Approved</button>
+      </div>
+
+      <div class="admin-reviews-list" id="admin-reviews-list">
+        <div style="color:var(--muted);font-size:0.85rem;padding:24px;">Loading reviews…</div>
+      </div>
+    </div>
+
+    <!-- ── PANEL: Setup Guide ─────────────────────────────── -->
+    <div class="admin-content" id="panel-setup" style="display:none;">
+      <div class="eyebrow" style="margin-bottom:20px;">Setup Guide</div>
+
+      <div style="max-width:680px; display:flex; flex-direction:column; gap:24px;">
+
+        <div style="background:var(--card); padding:28px; border-left:3px solid var(--gold);">
+          <div style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:10px;">Step 1 — Firebase Project</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.9;">
+            Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gold);">console.firebase.google.com</a> → Create project → Name it "radiance".<br>
+            Click the &lt;/&gt; web icon → Register app → Copy the config object.
+          </p>
+        </div>
+
+        <div style="background:var(--card); padding:28px; border-left:3px solid var(--gold);">
+          <div style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:10px;">Step 2 — Paste Firebase Config</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.9;">
+            Open <code style="color:var(--gold-light);">js/firebase-config.js</code> and replace the placeholder values with your actual Firebase config keys.
+          </p>
+        </div>
+
+        <div style="background:var(--card); padding:28px; border-left:3px solid var(--gold);">
+          <div style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:10px;">Step 3 — Enable Auth</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.9;">
+            Firebase Console → Build → Authentication → Get Started → Enable <strong style="color:var(--cream);">Google</strong> as a sign-in provider. Optionally also enable Email/Password.
+          </p>
+        </div>
+
+        <div style="background:var(--card); padding:28px; border-left:3px solid var(--gold);">
+          <div style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:10px;">Step 4 — Create Firestore Database</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.9;">
+            Firebase Console → Build → Firestore Database → Create database → Start in <strong style="color:var(--cream);">test mode</strong> (you'll tighten rules later).
+          </p>
+        </div>
+
+        <div style="background:var(--card); padding:28px; border-left:3px solid var(--gold);">
+          <div style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:10px;">Step 5 — Make Yourself Admin</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.9;">
+            Log in to the site with Google first. Then go to Firebase Console → Firestore → Add collection <code style="color:var(--gold-light);">admins</code> → document ID = your Firebase UID → add field <code style="color:var(--gold-light);">admin: true</code>.<br><br>
+            To find your UID: Firebase Console → Authentication → Users → copy your UID.
+          </p>
+        </div>
+
+        <div style="background:var(--card); padding:28px; border-left:3px solid var(--green);">
+          <div style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:10px;">Step 6 — Seed Products</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.9;">
+            Once Firebase is configured, click the <strong style="color:var(--cream);">"Seed Initial Data"</strong> button in the Products tab. This creates all 5 candles in Firestore so you can manage them from here.
+          </p>
+        </div>
+
+        <div style="background:var(--card); padding:28px; border-left:3px solid var(--green);">
+          <div style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:10px;">Step 7 — Add Your Photos</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.9;">
+            Drop your candle images into the <code style="color:var(--gold-light);">assets/</code> folder. The filenames expected are:<br>
+            <code style="color:var(--gold-light);">candle-hero.jpg</code> · <code style="color:var(--gold-light);">candle-about.jpg</code> · <code style="color:var(--gold-light);">candle-contact.jpg</code><br>
+            You can use the same photo for all three for now.
+          </p>
+        </div>
+
+        <div style="background:var(--card); padding:28px; border-left:3px solid var(--green);">
+          <div style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:10px;">Step 8 — Deploy to Vercel</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.9;">
+            Push the entire <code style="color:var(--gold-light);">radiance/</code> folder to a GitHub repo. Go to <a href="https://vercel.com" target="_blank" style="color:var(--gold);">vercel.com</a> → Import repo → Deploy. Done. Your site is live.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end admin-page -->
+
+  <footer class="footer">
+    <div class="footer__logo">Radiance Admin</div>
+    <div class="footer__copy">Admin access only.</div>
+  </footer>
+
+  <script type="module" src="js/admin.js"></script>
+  <script type="module">
+    // Cursor
+    import './js/firebase-config.js';
+    const dot = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+    (function loop(){ rx+=(mx-rx)*0.13; ry+=(my-ry)*0.13; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
+  </script>
+
+</body>
+</html>

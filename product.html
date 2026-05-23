@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candle — Radiance</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/product.css">
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div id="toast-container"></div>
+
+  <!-- ── NAVBAR ─────────────────────────────────────────────── -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="navbar__logo">
+      <img src="assets/logo.svg" alt="Radiance">
+    </a>
+    <ul class="navbar__links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#collection" class="active">Collection</a></li>
+      <li><a href="index.html#contact">Connect</a></li>
+    </ul>
+    <div class="navbar__actions">
+      <span id="nav-user-info" style="display:none;font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;"></span>
+      <a href="admin.html" class="btn-nav-admin" id="nav-admin-btn" style="display:none;">Admin</a>
+      <button class="btn-nav-login" id="nav-login-btn">Login</button>
+    </div>
+  </nav>
+
+  <!-- ── PRODUCT PAGE ───────────────────────────────────────── -->
+  <main class="product-page">
+
+    <!-- Hero banner -->
+    <div class="product-hero">
+      <div class="product-hero__bg">
+        <div class="product-hero__gradient"></div>
+      </div>
+      <div class="product-hero__content">
+        <div class="product-hero__left">
+          <span id="product-badge" style="display:none;" class="product-card__badge badge--gold"></span>
+          <div class="product-hero__num" id="product-num">No. 01</div>
+          <h1 class="product-hero__name" id="product-name">—</h1>
+          <div class="product-hero__scent" id="product-scent">—</div>
+          <div class="product-hero__rating-quick">
+            <div class="stars" id="hero-stars">
+              <span class="star">★</span><span class="star">★</span>
+              <span class="star">★</span><span class="star">★</span>
+              <span class="star">★</span>
+            </div>
+            <span id="rating-count-quick"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body: visual + info -->
+    <div class="product-body">
+
+      <!-- Sticky visual panel -->
+      <div class="product-visual">
+        <img src="assets/candle-hero.jpg" alt="Candle" class="product-visual__img" id="product-img">
+        <div class="product-visual__gradient"></div>
+      </div>
+
+      <!-- Info panel -->
+      <div class="product-info">
+
+        <!-- Trust metrics -->
+        <div class="trust-grid reveal">
+          <div class="trust-card">
+            <div class="trust-card__icon">🕯️</div>
+            <div class="trust-card__val" id="trust-made">—</div>
+            <div class="trust-card__label">Poured</div>
+          </div>
+          <div class="trust-card">
+            <div class="trust-card__icon">🏠</div>
+            <div class="trust-card__val" id="trust-sold">—</div>
+            <div class="trust-card__label">Found Homes</div>
+          </div>
+          <div class="trust-card">
+            <div class="trust-card__icon">✨</div>
+            <div class="trust-card__val" id="trust-left">—</div>
+            <div class="trust-card__label">Available</div>
+            <div class="stock-bar">
+              <div class="stock-bar__fill" id="stock-bar-fill" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="product-info__section reveal d1">
+          <div class="product-info__section-title">About This Candle</div>
+          <p class="product-desc" id="product-desc">—</p>
+        </div>
+
+        <!-- Scent notes -->
+        <div class="product-info__section reveal d2">
+          <div class="product-info__section-title">Scent Notes</div>
+          <div class="scent-notes" id="scent-notes">—</div>
+        </div>
+
+        <!-- Specs -->
+        <div class="product-info__section reveal d3">
+          <div class="product-info__section-title">Details</div>
+          <div class="specs">
+            <div class="spec-item">
+              <div class="spec-item__key">Burn Time</div>
+              <div class="spec-item__val" id="product-burn">—</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-item__key">Wax</div>
+              <div class="spec-item__val" id="product-wax">—</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-item__key">Wick</div>
+              <div class="spec-item__val" id="product-wick">—</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-item__key">Net Weight</div>
+              <div class="spec-item__val" id="product-weight">—</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-item__key">Vessel</div>
+              <div class="spec-item__val">Handmade Ceramic</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-item__key">Price</div>
+              <div class="spec-item__val" id="product-price">TBA</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enquire CTA -->
+        <div class="reveal d4" style="margin-top:36px;">
+          <a href="index.html#contact" class="btn btn--outline" style="width:100%;justify-content:center;">
+            <span>Enquire to Order</span>
+          </a>
+          <p style="font-size:0.7rem;color:var(--muted);margin-top:12px;text-align:center;letter-spacing:0.1em;">
+            Reach out on Instagram or WhatsApp to place an order
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── REVIEWS ─────────────────────────────────────────── -->
+    <div class="reviews-section">
+      <div class="reviews-header">
+        <div class="reviews-header__left">
+          <div class="eyebrow">Customer Reviews</div>
+          <div class="reviews-summary">
+            <div class="reviews-summary__avg" id="rating-avg">—</div>
+            <div class="reviews-summary__right">
+              <div class="stars" id="avg-stars">
+                <span class="star">★</span><span class="star">★</span>
+                <span class="star">★</span><span class="star">★</span>
+                <span class="star">★</span>
+              </div>
+              <div class="reviews-summary__count" id="rating-count">No reviews yet</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating breakdown -->
+        <div class="rating-bars">
+          <div class="rating-row"><span class="rating-row__label">5</span><div class="rating-row__bar"><div class="rating-row__fill" id="bar-5" style="width:0%"></div></div><span class="rating-row__pct" id="pct-5">0%</span></div>
+          <div class="rating-row"><span class="rating-row__label">4</span><div class="rating-row__bar"><div class="rating-row__fill" id="bar-4" style="width:0%"></div></div><span class="rating-row__pct" id="pct-4">0%</span></div>
+          <div class="rating-row"><span class="rating-row__label">3</span><div class="rating-row__bar"><div class="rating-row__fill" id="bar-3" style="width:0%"></div></div><span class="rating-row__pct" id="pct-3">0%</span></div>
+          <div class="rating-row"><span class="rating-row__label">2</span><div class="rating-row__bar"><div class="rating-row__fill" id="bar-2" style="width:0%"></div></div><span class="rating-row__pct" id="pct-2">0%</span></div>
+          <div class="rating-row"><span class="rating-row__label">1</span><div class="rating-row__bar"><div class="rating-row__fill" id="bar-1" style="width:0%"></div></div><span class="rating-row__pct" id="pct-1">0%</span></div>
+        </div>
+      </div>
+
+      <!-- Write a review -->
+      <div class="write-review reveal">
+        <div class="write-review__title">Share Your Experience</div>
+        <div class="write-review__sub">Your review helps others decide — and helps us improve.</div>
+
+        <!-- Shown when NOT logged in -->
+        <div id="review-login-prompt" class="write-review__login-prompt">
+          <a href="login.html">Log in with Google</a> to leave a review.
+        </div>
+
+        <!-- Shown when logged in -->
+        <form id="review-form-inner" style="display:none;" onsubmit="return false;">
+          <div class="star-picker" id="star-picker">
+            <span class="star-picker__star" data-val="1">★</span>
+            <span class="star-picker__star" data-val="2">★</span>
+            <span class="star-picker__star" data-val="3">★</span>
+            <span class="star-picker__star" data-val="4">★</span>
+            <span class="star-picker__star" data-val="5">★</span>
+          </div>
+          <div class="field-group">
+            <label>Your Review</label>
+            <textarea id="review-text" rows="4" placeholder="What did you love about this candle? How was the scent, the burn, the look?"></textarea>
+          </div>
+          <button id="review-submit-btn" class="btn btn--gold" onclick="document.getElementById('review-form').dispatchEvent(new Event('submit'))">
+            Submit Review
+          </button>
+        </form>
+
+        <form id="review-form" style="display:none;"></form>
+      </div>
+
+      <!-- Reviews list -->
+      <div class="reviews-list" id="reviews-list">
+        <div style="padding:40px;color:var(--muted);font-size:0.85rem;">Loading reviews…</div>
+      </div>
+
+    </div>
+
+    <!-- Back link -->
+    <div style="padding:40px 80px;border-top:1px solid var(--border-subtle);">
+      <a href="index.html#collection" class="btn btn--ghost" style="font-size:0.65rem;">
+        ← Back to Collection
+      </a>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer__logo">Radiance</div>
+    <div class="footer__copy">© 2025 Radiance. All rights reserved.</div>
+  </footer>
+
+  <script type="module" src="js/product.js"></script>
+</body>
+</html>

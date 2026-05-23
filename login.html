@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Radiance</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <div id="toast-container"></div>
+
+  <div class="auth-page">
+
+    <!-- Left: visual -->
+    <div class="auth-visual">
+      <img src="assets/candle-hero.jpg" alt="Radiance candles">
+      <div class="auth-visual__overlay"></div>
+      <div class="auth-visual__quote">
+        "A room with a candle<br>is never <span>just a room.</span>"
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <div class="auth-panel">
+      <div class="auth-logo">
+        <img src="assets/logo.svg" alt="Radiance">
+      </div>
+
+      <h1 class="auth-heading">Welcome back.</h1>
+      <p class="auth-sub">Log in to leave reviews and track your orders.</p>
+
+      <!-- Google login (recommended) -->
+      <button class="btn-google" id="google-login-btn">
+        <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="auth-divider">or sign in with email</div>
+
+      <div class="auth-error" id="auth-error"></div>
+
+      <div class="auth-form">
+        <div class="auth-field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn--gold auth-submit" id="email-login-btn">
+          Log In
+        </button>
+      </div>
+
+      <p class="auth-footer-text">
+        Don't have an account? <a href="signup.html">Sign up</a>
+      </p>
+      <p class="auth-footer-text" style="margin-top:10px;">
+        <a href="index.html">← Back to Radiance</a>
+      </p>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { auth }                         from './js/firebase-config.js';
+    import { loginWithGoogle }              from './js/auth.js';
+    import {
+      signInWithEmailAndPassword,
+      onAuthStateChanged
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+    // Redirect if already logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = 'index.html';
+    });
+
+    // Cursor
+    const dot = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+    (function loop(){ rx+=(mx-rx)*0.13; ry+=(my-ry)*0.13; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
+
+    function showError(msg) {
+      const el = document.getElementById('auth-error');
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    // Google
+    document.getElementById('google-login-btn').addEventListener('click', async () => {
+      try {
+        await loginWithGoogle();
+        window.location.href = 'index.html';
+      } catch (err) {
+        showError('Google sign-in failed. Please try again.');
+      }
+    });
+
+    // Email + password
+    document.getElementById('email-login-btn').addEventListener('click', async () => {
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) { showError('Please fill in both fields.'); return; }
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = 'index.html';
+      } catch (err) {
+        const msgs = {
+          'auth/user-not-found':  'No account found with that email.',
+          'auth/wrong-password':  'Incorrect password.',
+          'auth/invalid-email':   'Invalid email address.',
+          'auth/too-many-requests': 'Too many attempts. Try again later.',
+        };
+        showError(msgs[err.code] || 'Login failed. Please try again.');
+      }
+    });
+
+    // Enter key submits
+    document.getElementById('password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('email-login-btn').click();
+    });
+  </script>
+
+</body>
+</html>
