@@ -129,7 +129,7 @@ body { cursor: none; }
   border-radius: 50%;
   position: fixed; top: 0; left: 0;
   pointer-events: none; z-index: 9999;
-  transform: translate(-50%, -50%);
+  will-change: transform;
   transition: width var(--t-fast), height var(--t-fast), background var(--t-fast);
 }
 
@@ -139,9 +139,9 @@ body { cursor: none; }
   border-radius: 50%;
   position: fixed; top: 0; left: 0;
   pointer-events: none; z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: width 0.15s var(--ease), height 0.15s var(--ease),
-              border-color 0.15s, opacity 0.15s;
+  will-change: transform;
+  transition: width 0.18s var(--ease), height 0.18s var(--ease),
+              border-color 0.18s, opacity 0.15s;
 }
 
 body.cursor-hover #cursor       { width: 18px; height: 18px; background: var(--gold-light); }
@@ -338,8 +338,8 @@ body.cursor-hover #cursor-ring  { width: 60px; height: 60px; border-color: var(-
 
 /* ── SCROLL REVEAL ─────────────────────────────────────────── */
 .reveal {
-  opacity: 0; transform: translateY(32px);
-  transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
 }
 
 .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -347,6 +347,11 @@ body.cursor-hover #cursor-ring  { width: 60px; height: 60px; border-color: var(-
 .reveal.d2 { transition-delay: 0.22s; }
 .reveal.d3 { transition-delay: 0.34s; }
 .reveal.d4 { transition-delay: 0.46s; }
+
+/* Safety net — if JS fails, content still shows after 3s */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}
 
 /* ── SCROLLBAR ─────────────────────────────────────────────── */
 ::-webkit-scrollbar              { width: 5px; }
