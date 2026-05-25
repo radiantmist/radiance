@@ -1,5 +1,5 @@
 // ============================================================
-// home.js — Homepage Logic
+// home.js — Homepage Logic (GSAP Enhanced)
 // ============================================================
 
 import { db, auth }        from './firebase-config.js';
@@ -13,14 +13,149 @@ document.addEventListener('DOMContentLoaded', async () => {
   initNavScroll();
   initAuthUI();
   await loadProducts();
-  initReveal();
+  initGSAPAnimations();  // NEW: GSAP replaces basic CSS reveals
 });
 
-// ── Scroll Reveal — threshold 0 + hard fallback ──────────────
-function initReveal() {
-  const els = document.querySelectorAll('.reveal');
+// ── GSAP ScrollTrigger Animations ─────────────────────────────
+function initGSAPAnimations() {
+  // Check if GSAP is loaded (loaded via CDN in HTML)
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    console.warn('GSAP not loaded, falling back to CSS reveals');
+    initCSSRevealFallback();
+    return;
+  }
 
-  // Hard fallback: if observer doesn't fire within 2s, show everything
+  gsap.registerPlugin(ScrollTrigger);
+
+  // 1. Hero text staggered entrance (already has CSS animation, but GSAP makes it smoother)
+  const heroTl = gsap.timeline();
+  heroTl
+    .from('.hero__eyebrow', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' })
+    .from('.hero__title', { y: 50, opacity: 0, duration: 1, ease: 'power3.out' }, '-=0.5')
+    .from('.hero__desc', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.6')
+    .from('.hero__actions', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4');
+
+  // 2. About section — image parallax + text reveal
+  gsap.to('.about__visual img', {
+    yPercent: -8,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.about',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 1
+    }
+  });
+
+  gsap.from('.about__content', {
+    y: 60,
+    opacity: 0,
+    duration: 1,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '.about',
+      start: 'top 75%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  // 3. Product cards — staggered scroll reveal
+  gsap.from('.product-card', {
+    y: 80,
+    opacity: 0,
+    duration: 0.9,
+    stagger: 0.15,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '#products-scroll',
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  // 4. Statement section — quote reveal
+  gsap.from('.statement__quote', {
+    y: 50,
+    opacity: 0,
+    duration: 1.2,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '.statement',
+      start: 'top 70%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  gsap.from('.statement__body', {
+    y: 40,
+    opacity: 0,
+    duration: 1,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '.statement__body',
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  // 5. Stats counter animation
+  const statValues = document.querySelectorAll('.s-num__val');
+  statValues.forEach(stat => {
+    const finalValue = stat.textContent;
+    const numMatch = finalValue.match(/[0-9]+/);
+    if (numMatch) {
+      const targetNum = parseInt(numMatch[0]);
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: targetNum,
+        duration: 2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: stat,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        },
+        onUpdate: () => {
+          stat.innerHTML = stat.innerHTML.replace(/[0-9]+/, Math.round(obj.val));
+        }
+      });
+    }
+  });
+
+  // 6. Contact cards — staggered entrance
+  gsap.from('.contact-card', {
+    y: 40,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.12,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '.contact__cards',
+      start: 'top 85%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  // 7. Marquee speed boost on scroll
+  let marqueeSpeed = 1;
+  const marqueeTrack = document.querySelector('.marquee__track');
+  if (marqueeTrack) {
+    ScrollTrigger.create({
+      trigger: '.marquee',
+      start: 'top bottom',
+      end: 'bottom top',
+      onUpdate: (self) => {
+        const velocity = Math.abs(self.getVelocity()) / 1000;
+        marqueeSpeed = 1 + Math.min(velocity * 0.5, 2);
+        marqueeTrack.style.animationDuration = `${26 / marqueeSpeed}s`;
+      }
+    });
+  }
+}
+
+// ── CSS Reveal Fallback (if GSAP fails to load) ──────────────
+function initCSSRevealFallback() {
+  const els = document.querySelectorAll('.reveal');
   const fallback = setTimeout(() => {
     els.forEach(el => el.classList.add('visible'));
   }, 2000);
@@ -36,7 +171,6 @@ function initReveal() {
 
   els.forEach(el => obs.observe(el));
 
-  // If all revealed naturally, clear fallback
   const check = setInterval(() => {
     const remaining = document.querySelectorAll('.reveal:not(.visible)');
     if (remaining.length === 0) { clearTimeout(fallback); clearInterval(check); }
@@ -84,8 +218,18 @@ function initAuthUI() {
   });
 }
 
-// ── Cursor — simple and smooth ───────────────────────────────
+// ── Cursor — simple and smooth (DISABLED on touch devices) ───
 function initCursor() {
+  // FIX: Don't run on touch devices (saves battery, prevents issues)
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    document.body.style.cursor = 'auto';
+    const dot = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    if (dot) dot.style.display = 'none';
+    if (ring) ring.style.display = 'none';
+    return;
+  }
+
   const dot  = document.getElementById('cursor');
   const ring = document.getElementById('cursor-ring');
   if (!dot || !ring) return;
@@ -148,6 +292,7 @@ async function loadProducts() {
     console.info('Using fallback products:', err.message);
   }
 
+  // FIX: Show loading state properly, then render
   grid.innerHTML = products.map(renderCard).join('');
 
   grid.querySelectorAll('.product-card').forEach(card => {

@@ -49,7 +49,13 @@ onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   isAdmin     = user ? await checkAdmin(user.uid) : false;
   listeners.forEach(fn => fn(user, isAdmin));
-  updateNavUI(user, isAdmin);
+
+  // FIX: Wait for DOM to be ready before updating UI
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => updateNavUI(user, isAdmin));
+  } else {
+    updateNavUI(user, isAdmin);
+  }
 });
 
 export function onAuthChange(fn) {

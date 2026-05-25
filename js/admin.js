@@ -26,12 +26,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ── Tabs ──────────────────────────────────────────────────────
 function initTabs() {
   const tabs    = document.querySelectorAll('.admin-tab');
-  const panels  = document.querySelectorAll('.admin-panel');
+  // FIX: panels are identified by id, not class
+  const panels  = [
+    document.getElementById('panel-products'),
+    document.getElementById('panel-reviews'),
+    document.getElementById('panel-setup')
+  ].filter(Boolean);
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
-      panels.forEach(p => p.style.display = 'none');
+      panels.forEach(p => { if(p) p.style.display = 'none'; });
       tab.classList.add('active');
       const target = document.getElementById(`panel-${tab.dataset.tab}`);
       if (target) target.style.display = 'block';
